@@ -9,3 +9,47 @@ services:
       - .env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    env_file:
+      - .env
+    depends_on:
+      - backend
+
+  vllm:
+    image: vllm/vllm-openai:latest
+    ports:
+      - "8001:8000"
+    volumes:
+      - vllm_models:/root/.cache/huggingface
+    ipc: host
+    environment:
+      # WSL2에서는 커널 버전 조건을 만족해도 pinned memory(-> UVA)가 기본적으로 꺼져있어
+      # 명시적으로 켜야 함. 이게 없으면 "UVA is not available"로 엔진 초기화가 실패한다.
+      - VLLM_WSL2_ENABLE_PIN_MEMORY=1
+    command:
+      - --model
+      - Qwen/Qwen2.5-14B-Instruct-AWQ
+      - --quantization
+      - awq
+      - --gpu-memory-utilization
+      - "0.75"
+      - --max-model-len
+      - "16384"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+volumes:
+  vllm_models:

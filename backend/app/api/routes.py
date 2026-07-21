@@ -1,18 +1,18 @@
-from fastapi import Depends, FastAPI
+from fastapi import APIRouter, Depends
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import get_db
+from ..database import get_db
 
-app = FastAPI()
+router = APIRouter()
 
 
-@app.get("/")
+@router.get("/")
 async def root():
     return {"message": "Hello Worldsss!"}
 
 
-@app.get("/health/db")
+@router.get("/health/db")
 async def health_db(db: AsyncSession = Depends(get_db)):
     await db.execute(text("SELECT 1"))
     return {"db": "ok"}

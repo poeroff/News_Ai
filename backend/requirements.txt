@@ -3,3 +3,10 @@ fastapi-cli==0.0.7
 uvicorn[standard]==0.51.0
 sqlalchemy==2.0.36
 asyncmy==0.2.9
+crawl4ai==0.9.1
+sentence-transformers
+numpy
+pandas
+requests
+lxml
+apscheduler
