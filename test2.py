@@ -26,5 +26,3 @@ if __name__ == "__main__":
     print(df.head())
     print(df[df["회사명"] == "SK하이닉스"])
 
-
-print("종목코드 005930:", df[df["종목코드"] == "005930"]["회사명"].values[0])
